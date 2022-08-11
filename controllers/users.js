@@ -7,22 +7,17 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.findUser = (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        res.status(404).send({ message: 'Нет пользователя с таким id' });
-      } else {
-        res.send({ data: user });
-      }
-    })
-    .catch((err) => res.send({ message: `Произошла ошибка ${err.message}` }));
+  const { userId } = req.params;
+  User.findById(userId)
+    .then((data) => res.send({ data }))
+    .catch(() => res.status(404).send({ message: 'Нет пользователя с таким id' }));
 };
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.send({ message: `Произошла ошибка ${err.message}` }));
+    .catch((err) => res.status(400).send({ message: `Произошла ошибка ${err.message}` }));
 };
 
 module.exports.updateUser = (req, res) => {
@@ -37,7 +32,7 @@ module.exports.updateUser = (req, res) => {
     },
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.send({ message: `Произошла ошибка ${err.message}` }));
+    .catch((err) => res.status(400).send({ message: `Произошла ошибка ${err.message}` }));
 };
 
 module.exports.updateUserAvatar = (req, res) => {
@@ -52,5 +47,5 @@ module.exports.updateUserAvatar = (req, res) => {
     },
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.send({ message: `Произошла ошибка ${err.message}` }));
+    .catch((err) => res.status(400).send({ message: `Произошла ошибка ${err.message}` }));
 };
