@@ -9,8 +9,9 @@ module.exports.getUsers = (req, res) => {
 module.exports.findUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
+    .orFail(() => res.status(404).send({ message: 'Нет пользователя с таким id' }))
     .then((data) => res.send({ data }))
-    .catch(() => res.status(404).send({ message: 'Нет пользователя с таким id' }));
+    .catch(() => res.status(400).send({ message: 'Нет пользователя с таким id' }));
 };
 
 module.exports.createUser = (req, res) => {
