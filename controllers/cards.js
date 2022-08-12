@@ -21,9 +21,8 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => res.status(404).send({ message: 'Что пошло не так' }))
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера' }));
+    .catch(() => res.status(400).send({ message: 'Некорректный id' }));
 };
 
 module.exports.likeCard = (req, res) => {
@@ -32,9 +31,8 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => res.status(404).send({ message: 'Что пошло не так' }))
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера' }));
+    .catch(() => res.status(400).send({ message: 'Что пошло не так' }));
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -43,7 +41,6 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => res.status(404).send({ message: 'Что пошло не так' }))
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.message}` }));
+    .catch(() => res.status(400).send({ message: 'Что пошло не так' }));
 };

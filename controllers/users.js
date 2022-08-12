@@ -12,7 +12,7 @@ module.exports.findUser = (req, res) => {
     .then((user) => {
       if (!user) { res.status(404).send({ message: 'Нет пользователя с таким id' }); } else res.send({ data: user });
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера' }));
+    .catch(() => res.status(400).send({ message: 'Некорректный id' }));
 };
 
 module.exports.createUser = (req, res) => {
