@@ -24,7 +24,7 @@ module.exports.deleteCard = (req, res) => {
     .orFail(() => res.status(404).send({ message: 'Что пошло не так' }))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.kind === 'objectid') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
@@ -41,7 +41,7 @@ module.exports.likeCard = (req, res) => {
     .orFail(() => res.status(404).send({ message: 'Что пошло не так' }))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.kind === 'objectid') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
@@ -58,7 +58,7 @@ module.exports.dislikeCard = (req, res) => {
     .orFail(() => res.status(404).send({ message: 'Что пошло не так' }))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.kind === 'objectid') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
