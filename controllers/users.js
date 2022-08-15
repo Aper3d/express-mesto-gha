@@ -13,7 +13,7 @@ module.exports.findUser = (req, res) => {
       if (!user) { res.status(404).send({ message: 'Нет пользователя с таким id' }); } else res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.kind === 'objectid') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
