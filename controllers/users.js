@@ -20,7 +20,7 @@ module.exports.findUser = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Нет пользователя с таким id'));
+        throw new NotFoundError('Нет пользователя с таким id');
       }
       return res.send({ user });
     })
@@ -45,7 +45,16 @@ module.exports.createUser = (req, res, next) => {
   bcrypt
     .hash(password, 10)
     .then((hash) => createUser(hash))
-    .then((user) => res.send({ user }))
+    .then((user) => {
+      const { _id } = user;
+      res.send({
+        _id,
+        name,
+        about,
+        avatar,
+        email,
+      });
+    })
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь уже существует'));
@@ -80,7 +89,7 @@ module.exports.getMe = (req, res, next) => {
   User.find({ _id })
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь не найден'));
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.send({ user });
     })
