@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const helmet = require('helmet');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -35,6 +36,7 @@ app.all('*', (req, res, next) => {
   next(new NotFoundError('Не правильный путь'));
 });
 
+app.use(errors());
 app.use(defaultError);
 
 app.listen(PORT, () => {
