@@ -11,18 +11,17 @@ const { JWT_SECRET = 'JWT_SECRET' } = process.env;
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ users }))
+    .then((users) => res.send({ data: users }))
     .catch(next);
 };
 
 module.exports.findUser = (req, res, next) => {
-  const userId = req.user._id;
-  User.findById(userId)
+  User.findById(req.params.id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Нет пользователя с таким id');
       }
-      return res.send({ user });
+      res.send({ data: user });
     })
     .catch(next);
 };
