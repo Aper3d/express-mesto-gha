@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { createUser, login } = require('../controllers/users');
-const reg = require('../utils/isLink');
 
 router.post(
   '/signup',
@@ -9,7 +8,7 @@ router.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().pattern(reg),
+      avatar: Joi.string().required().regex(/(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!-]))?/),
       email: Joi.string().required().email(),
       password: Joi.string().required(),
     }),
