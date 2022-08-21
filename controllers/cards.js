@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const ForbiddenError = require('../errors/ForbiddenError');
 const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require('../errors/ValidationError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -12,14 +13,19 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        next(new ValidationError('Переданы некорректные данные'));
+      }
+      res.status(200).send({ data: card });
+    })
     .catch(next);
 };
 
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndRemove(cardId)
+  Card.findById(cardId)
     .orFail(() => {
       throw new NotFoundError('Карточка  не найдена');
     })
@@ -27,11 +33,12 @@ module.exports.deleteCard = (req, res, next) => {
       if (!card.owner.equals(req.user._id)) {
         return next(new ForbiddenError('Вы не можете удалить чужую карточку'));
       }
-      return card.remove()
-        .then(() => {
-          res.status(201).send({ message: 'Карточка удалена' });
-        });
-    }).catch(next);
+      return card.remove();
+    })
+    .then(() => {
+      res.status(201).send({ message: 'Карточка удалена' });
+    })
+    .catch(next);
 };
 
 module.exports.likeCard = (req, res, next) => {
@@ -40,11 +47,11 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((like) => {
-      if (!like) {
+    .then((card) => {
+      if (!card) {
         throw new NotFoundError('Переданный id не найден');
       }
-      res.status(201).send({ data: like });
+      res.status(201).send({ data: card });
     })
     .catch(next);
 };
@@ -55,11 +62,11 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((like) => {
-      if (!like) {
+    .then((card) => {
+      if (!card) {
         throw new NotFoundError('Переданный id не найден');
       }
-      res.status(201).send({ data: like });
+      res.status(201).send({ data: card });
     })
     .catch(next);
 };
