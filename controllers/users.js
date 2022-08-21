@@ -16,10 +16,21 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.findUser = (req, res, next) => {
-  User.findById(req.params.id)
+  User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Нет пользователя с таким id');
+      }
+      res.send({ data: user });
+    })
+    .catch(next);
+};
+
+module.exports.getMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
       }
       res.send({ data: user });
     })
@@ -80,18 +91,6 @@ module.exports.updateUserAvatar = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .then((user) => res.send({ user }))
-    .catch(next);
-};
-
-module.exports.getMe = (req, res, next) => {
-  const { _id } = req.user;
-  User.find({ _id })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      return res.send({ user });
-    })
     .catch(next);
 };
 

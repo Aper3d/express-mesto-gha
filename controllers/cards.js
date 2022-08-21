@@ -12,14 +12,14 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send({ data: card }))
     .catch(next);
 };
 
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
-  Card.findById(cardId)
+  Card.findByIdAndRemove(cardId)
     .orFail(() => {
       throw new NotFoundError('Карточка  не найдена');
     })
@@ -29,7 +29,7 @@ module.exports.deleteCard = (req, res, next) => {
       }
       return card.remove()
         .then(() => {
-          res.send({ message: 'Карточка удалена' });
+          res.status(201).send({ message: 'Карточка удалена' });
         });
     }).catch(next);
 };
@@ -44,7 +44,7 @@ module.exports.likeCard = (req, res, next) => {
       if (!like) {
         throw new NotFoundError('Переданный id не найден');
       }
-      res.send({ data: like });
+      res.status(201).send({ data: like });
     })
     .catch(next);
 };
@@ -59,7 +59,7 @@ module.exports.dislikeCard = (req, res, next) => {
       if (!like) {
         throw new NotFoundError('Переданный id не найден');
       }
-      res.send({ data: like });
+      res.status(201).send({ data: like });
     })
     .catch(next);
 };
