@@ -48,6 +48,6 @@ module.exports.dislikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => { throw new NotFoundError('Карточка не найдена'); })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(200).send({ data: card }))
     .catch(next);
 };
