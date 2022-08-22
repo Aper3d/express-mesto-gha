@@ -4,8 +4,8 @@ const UnauthorizedError = require('../errors/UnauthorizedError');
 
 const { JWT_SECRET = 'JWT_SECRET' } = process.env;
 
-const handleAuthError = (next) => {
-  next(new UnauthorizedError('Необходима авторизация'));
+const handleAuthError = () => {
+  throw new UnauthorizedError('Необходима авторизация');
 };
 
 module.exports = (req, res, next) => {

@@ -5,8 +5,6 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
-require('dotenv').config();
-
 const { JWT_SECRET = 'JWT_SECRET' } = process.env;
 
 module.exports.getUsers = (req, res, next) => {
@@ -56,19 +54,15 @@ module.exports.createUser = (req, res, next) => {
     .hash(password, 10)
     .then((hash) => createUser(hash))
     .then((user) => {
-      const { _id } = user;
-      res.send({
-        _id,
-        name,
-        about,
-        avatar,
-        email,
-      });
+      const userWithoutPass = user.toObject();
+      delete userWithoutPass.password;
+      res.status(201).send(userWithoutPass);
     })
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь уже существует'));
       }
+      next(err);
     });
 };
 
