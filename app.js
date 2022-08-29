@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
 const errorHandler = require('./errors/errorHandler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 
@@ -20,6 +21,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   autoIndex: true,
 });
 
+app.use(requestLogger);
 app.use('/', require('./routes/auth'));
 
 app.use(auth);
@@ -31,6 +33,7 @@ app.all('*', (req, res, next) => {
   next(new NotFoundError('Не правильный путь'));
 });
 
+app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
